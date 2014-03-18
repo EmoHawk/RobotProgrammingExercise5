@@ -1,3 +1,4 @@
+package localisation;
 
 
 import lejos.nxt.Motor;
@@ -234,7 +235,6 @@ public class PerfectActionModel implements ActionModel {
 					{
 						if(!gridmap.isValidTransition(toX, toY, (toX + 1), toY))
 						{
-							System.out.println("Probability " + (fromProb + toProb) + " going to (" + toX + "," + toY + ")");
 							_to.setProbability(toX, toY, fromProb + toProb);
 						}
 						else
