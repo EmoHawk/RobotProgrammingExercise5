@@ -1,4 +1,4 @@
-package localisation;
+
 
 import lejos.nxt.Motor;
 import lejos.robotics.localization.PoseProvider;
@@ -63,37 +63,54 @@ public class PerfectActionModel implements ActionModel {
 
 	private void moveMinusY(GridPositionDistribution _from,
 			GridPositionDistribution _to) {
-		// TODO Auto-generated method stub
-		for (int y = 1; y < _to.getGridHeight(); y++) {
-
+		
+		//System.out.println(_to.getGridHeight());
+		//System.out.println(_to.getGridWidth());
+		GridMap gridmap = _to.getGridMap();
+		// iterate through points updating as appropriate
+		
+		//System.out.println("height " + _to.getGridHeight());
+		//System.out.println("witdh " + _to.getGridWidth());
+		
+		for (int y = 0; y < _to.getGridHeight() ; y++) {
+			
 			for (int x = 0; x < _to.getGridWidth(); x++) {
-
-				
-				
+				if(gridmap.isValidTransition(x, y, x, y + 1) || gridmap.isValidTransition(x, y, x, y - 1))
+				{
+					_to.setProbability(x, y, 0);
+				}
+			}
+		}
+		
+		for (int y = 1; y < _to.getGridHeight() ; y++) {
+			
+			for (int x = 0; x < _to.getGridWidth(); x++) {
+								
 				// make sure to respect obstructed grid points
 				if (!_to.isObstructed(x, y)) {
-					// position before move
+					
+					// position before move					
 					int fromX = x;
 					int fromY = y;
 					float fromProb = _from.getProbability(fromX, fromY);
 					
 					// position after move
-					int toX = x;
-					int toY = y - 1;
+					int toX = x ;
+					int toY = y - 1 ;
+					
+					float toProb = _from.getProbability(toX, toY);
 
-					//tomtom.addWaypoint(toX, toY);
-					//tomtom.followPath();
-					// set probability for position after move
-					if(!_to.isObstructed(toX, toY))
+					if(gridmap.isValidTransition(fromX, fromY, toX, toY))
 					{
-						if(_to.isValidGridPoint(toX, toY))
+						if(!gridmap.isValidTransition(toX, toY, toX, (toY - 1)))
+						{
+							_to.setProbability(toX, toY, fromProb + toProb);
+						}
+						else
 						{
 							_to.setProbability(toX, toY, fromProb);
 						}
 					}
-					
-					
-
 				}
 			}
 		}
@@ -102,29 +119,54 @@ public class PerfectActionModel implements ActionModel {
 
 	private void moveMinusX(GridPositionDistribution _from,
 			GridPositionDistribution _to) {
-		// TODO Auto-generated method stub
-		for (int y = 0; y < _to.getGridHeight(); y++) {
-
+		
+		//System.out.println(_to.getGridHeight());
+		//System.out.println(_to.getGridWidth());
+		GridMap gridmap = _to.getGridMap();
+		// iterate through points updating as appropriate
+		
+		//System.out.println("height " + _to.getGridHeight());
+		//System.out.println("witdh " + _to.getGridWidth());
+		
+		for (int y = 0; y < _to.getGridHeight() ; y++) {
+			
 			for (int x = 0; x < _to.getGridWidth(); x++) {
-
-				
-				
+				if(gridmap.isValidTransition(x, y, x + 1, y) || gridmap.isValidTransition(x, y, x - 1, y))
+				{
+					_to.setProbability(x, y, 0);
+				}
+			}
+		}
+		
+		for (int y = 0; y < _to.getGridHeight(); y++) {
+			
+			for (int x = 1; x < _to.getGridWidth(); x++) {
+								
 				// make sure to respect obstructed grid points
 				if (!_to.isObstructed(x, y)) {
-					// position before move
+					
+					// position before move					
 					int fromX = x;
 					int fromY = y;
 					float fromProb = _from.getProbability(fromX, fromY);
 					
 					// position after move
-					int toX = x - 1;
-					int toY = y;
+					int toX = x - 1 ;
+					int toY = y ;
+					
+					float toProb = _from.getProbability(toX, toY);
 
-					//tomtom.addWaypoint(toX, toY);
-					//tomtom.followPath();
-					// set probability for position after move
-					_to.setProbability(toX, toY, fromProb);
-
+					if(gridmap.isValidTransition(fromX, fromY, toX, toY))
+					{
+						if(!gridmap.isValidTransition(toX, toY, toX - 1, toY))
+						{
+							_to.setProbability(toX, toY, fromProb + toProb);
+						}
+						else
+						{
+							_to.setProbability(toX, toY, fromProb);
+						}
+					}
 				}
 			}
 		}
@@ -142,7 +184,6 @@ public class PerfectActionModel implements ActionModel {
 		
 		//System.out.println(_to.getGridHeight());
 		//System.out.println(_to.getGridWidth());
-		float singleProb = _from.getProbability(0, 0);
 		GridMap gridmap = _to.getGridMap();
 		// iterate through points updating as appropriate
 		
@@ -151,7 +192,17 @@ public class PerfectActionModel implements ActionModel {
 		
 		for (int y = 0; y < _to.getGridHeight() ; y++) {
 			
-			for (int x = _to.getGridWidth() - 1; x > 0; x--) {
+			for (int x = 0; x < _to.getGridWidth(); x++) {
+				if(gridmap.isValidTransition(x, y, x + 1, y) || gridmap.isValidTransition(x, y, x - 1, y))
+				{
+					_to.setProbability(x, y, 0);
+				}
+			}
+		}
+		
+		for (int y = 0; y < _to.getGridHeight() ; y++) {
+			
+			for (int x = 0; x < (_to.getGridWidth() - 1); x++) {
 								
 				// make sure to respect obstructed grid points
 				if (!_to.isObstructed(x, y)) {
@@ -177,35 +228,20 @@ public class PerfectActionModel implements ActionModel {
 					int toX = x + 1;
 					int toY = y ;
 					
-					float toProb = 0;
-									
-					if(_to.isValidGridPoint(toX, toY)){
-						toProb = _from.getProbability(toX, toY);
-//						if(!_to.isObstructed(toX, toY))
-//						{
-							if(gridmap.isValidTransition(fromX, fromY, toX, toY))
-							{
-								_to.setProbability(toX, toY, fromProb + toProb);
-								_to.setProbability(fromX, fromY, 0);
+					float toProb = _from.getProbability(toX, toY);
 
-							}
-							else
-							{
-								_to.setProbability(fromX, fromY, fromProb);
-							}
-//						} else {
-//							_to.setProbability(fromX, fromY, fromProb + toProb);
-//						}
-						
-						
-					} 
-					_to.normalise();
-					
-					
-					//tomtom.addWaypoint(toX, toY);
-					//tomtom.followPath();
-					// set probability for position after move
-
+					if(gridmap.isValidTransition(fromX, fromY, toX, toY))
+					{
+						if(!gridmap.isValidTransition(toX, toY, (toX + 1), toY))
+						{
+							System.out.println("Probability " + (fromProb + toProb) + " going to (" + toX + "," + toY + ")");
+							_to.setProbability(toX, toY, fromProb + toProb);
+						}
+						else
+						{
+							_to.setProbability(toX, toY, fromProb);
+						}
+					}
 				}
 			}
 		}
@@ -213,32 +249,54 @@ public class PerfectActionModel implements ActionModel {
 	
 	private void movePlusY(GridPositionDistribution _from,
 			GridPositionDistribution _to) {
-
+		
+		//System.out.println(_to.getGridHeight());
+		//System.out.println(_to.getGridWidth());
+		GridMap gridmap = _to.getGridMap();
 		// iterate through points updating as appropriate
-		for (int y = 0; y < _to.getGridHeight(); y++) {
-
+		
+		//System.out.println("height " + _to.getGridHeight());
+		//System.out.println("witdh " + _to.getGridWidth());
+		
+		for (int y = 0; y < _to.getGridHeight() ; y++) {
+			
 			for (int x = 0; x < _to.getGridWidth(); x++) {
-
-				
-				
+				if(gridmap.isValidTransition(x, y, x, y + 1) || gridmap.isValidTransition(x, y, x, y - 1))
+				{
+					_to.setProbability(x, y, 0);
+				}
+			}
+		}
+		
+		for (int y = 0; y < _to.getGridHeight() - 1 ; y++) {
+			
+			for (int x = 0; x < _to.getGridWidth(); x++) {
+								
 				// make sure to respect obstructed grid points
 				if (!_to.isObstructed(x, y)) {
-
-					// position before move
+					
+					// position before move					
 					int fromX = x;
 					int fromY = y;
 					float fromProb = _from.getProbability(fromX, fromY);
 					
 					// position after move
-					int toX = x;
-					int toY = y + 1;
+					int toX = x ;
+					int toY = y + 1 ;
 					
-					//tomtom.addWaypoint(toX, toY);
-					//tomtom.followPath();
+					float toProb = _from.getProbability(toX, toY);
 
-					// set probability for position after move
-					_to.setProbability(toX, toY, fromProb);
-
+					if(gridmap.isValidTransition(fromX, fromY, toX, toY))
+					{
+						if(!gridmap.isValidTransition(toX, toY, toX, (toY + 1)))
+						{
+							_to.setProbability(toX, toY, fromProb + toProb);
+						}
+						else
+						{
+							_to.setProbability(toX, toY, fromProb);
+						}
+					}
 				}
 			}
 		}
