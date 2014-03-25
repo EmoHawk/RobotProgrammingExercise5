@@ -24,6 +24,8 @@ public class TrackedRobot {
 	private static double max_speed;
 	static LightSensor m_lightSensorR;
 	static LightSensor m_lightSensorL;
+	private final static int TURN_90 = 125;
+	private final static int TURN_180 = TURN_90 * 2;
 	
 	public TrackedRobot()
 	{
@@ -51,95 +53,157 @@ public class TrackedRobot {
 	
 	public void turnToHeading(Heading _to)
 	{
-		switch(currentHeading)
+		
+		if(currentHeading == Heading.PLUS_Y)
 		{
-		case PLUS_X: 
-			switch(_to)
-			{
-			case PLUS_X: ;
-			break;
-			case PLUS_Y: m_pilot.rotate(90);
-			currentHeading = _to;
-			break;
-			case MINUS_X: m_pilot.rotate(180);
-			currentHeading = _to;
-			break;
-			case MINUS_Y: m_pilot.rotate(-90);
-			currentHeading = _to;
-			break;
-			};
-		break;
-		case PLUS_Y: 
-			switch(_to)
-			{
-			case PLUS_X: m_pilot.rotate(-90);
-			currentHeading = _to;
-			break;
-			case PLUS_Y: ;
-			break;
-			case MINUS_X: m_pilot.rotate(90);
-			currentHeading = _to;
-			break;
-			case MINUS_Y: m_pilot.rotate(180);
-			currentHeading = _to;
-			break;
-			};
-		case MINUS_X: 
-			switch(_to)
-			{
-			case PLUS_X: m_pilot.rotate(90);
-			currentHeading = _to;
-			break;
-			case PLUS_Y: m_pilot.rotate(-90);
-			currentHeading = _to;
-			break;
-			case MINUS_X: ;
-			break;
-			case MINUS_Y: m_pilot.rotate(180);
-			currentHeading = _to;
-			break;
-			};
-		break;
-		case MINUS_Y: 
-			switch(_to)
-			{
-			case PLUS_X: m_pilot.rotate(90);
-			currentHeading = _to;
-			break;
-			case PLUS_Y: m_pilot.rotate(180);
-			currentHeading = _to;
-			break;
-			case MINUS_X: m_pilot.rotate(-90);
-			currentHeading = _to;
-			break;
-			case MINUS_Y: ;
-			break;
-			};
-		break;
+			System.out.println("B PLUS_Y");
 		}
+		else if( currentHeading == Heading.PLUS_X)
+		{
+			System.out.println("B PLUS_X");
+		}
+		else if(currentHeading == Heading.MINUS_X)
+		{
+			System.out.println("B MINUS_X");
+		}
+		else if(currentHeading == Heading.MINUS_Y)
+		{
+			System.out.println("B MINUS_Y");
+		}
+		
+		if(currentHeading == Heading.PLUS_X)
+		{
+			if(_to == Heading.PLUS_X)
+			{
+				//do nothing
+			}
+			else if(_to == Heading.PLUS_Y)
+			{
+				goRight();//m_pilot.rotate(TURN_90);
+				currentHeading = Heading.PLUS_Y;
+			}
+			else if(_to == Heading.MINUS_X)
+			{
+				turnAround();//m_pilot.rotate(TURN_180);
+				currentHeading = Heading.MINUS_X;
+			}
+			else if(_to == Heading.MINUS_Y)
+			{
+				goLeft();//m_pilot.rotate(-TURN_90);
+				currentHeading = Heading.MINUS_Y;
+			}
+
+		}
+		else if(currentHeading == Heading.PLUS_Y)
+		{
+			if(_to == Heading.PLUS_X)
+			{
+				goLeft();//m_pilot.rotate(-TURN_90);
+				currentHeading = Heading.PLUS_X;
+			}
+			else if(_to == Heading.PLUS_Y)
+			{
+				//do nothing
+			}
+			else if(_to == Heading.MINUS_X)
+			{
+				goRight();//m_pilot.rotate(TURN_90);
+				currentHeading = Heading.MINUS_X;
+			}
+			else if(_to == Heading.MINUS_Y)
+			{
+				turnAround();//m_pilot.rotate(TURN_180);
+				currentHeading = Heading.MINUS_Y;
+			}
+		}
+		else if(currentHeading == Heading.MINUS_X)
+		{
+			if(_to == Heading.PLUS_X)
+			{
+				goRight();//m_pilot.rotate(TURN_90);
+				currentHeading = Heading.PLUS_X;
+			}
+			else if(_to == Heading.PLUS_Y)
+			{
+				goLeft();//m_pilot.rotate(-TURN_90);
+				currentHeading = Heading.PLUS_Y;
+			}
+			else if(_to == Heading.MINUS_X)
+			{
+				//do nothing
+			}
+			else if(_to == Heading.MINUS_Y)
+			{
+				turnAround();//m_pilot.rotate(TURN_180);
+				currentHeading = Heading.MINUS_Y;
+			}
+		}
+		else if(currentHeading == Heading.MINUS_Y)
+		{
+			if(_to == Heading.PLUS_X)
+			{
+				goRight();//m_pilot.rotate(TURN_90);
+				currentHeading = Heading.PLUS_X;
+			}
+			else if(_to == Heading.PLUS_Y)
+			{
+				turnAround();//m_pilot.rotate(TURN_180);
+				currentHeading = Heading.PLUS_Y;
+			}
+			else if(_to == Heading.MINUS_X)
+			{
+				goLeft();//m_pilot.rotate(-TURN_90);
+				currentHeading = Heading.MINUS_X;
+			}
+			else if(_to == Heading.MINUS_Y)
+			{
+				//do nothing
+			}
+		}
+		currentHeading = _to;
+		
+		if(currentHeading == Heading.PLUS_Y)
+		{
+			System.out.println("A PLUS_Y");
+		}
+		else if( currentHeading == Heading.PLUS_X)
+		{
+			System.out.println("A PLUS_X");
+		}
+		else if(currentHeading == Heading.MINUS_X)
+		{
+			System.out.println("A MINUS_X");
+		}
+		else if(currentHeading == Heading.MINUS_Y)
+		{
+			System.out.println("A MINUS_Y");
+		}
+		
 	}
 	
-	/*public static void main(String[] args) 
-	{
-		TrackedRobot robot = new TrackedRobot();
-		m_lightSensorR = new LightSensor(SensorPort.S2, true);
-		m_lightSensorL = new LightSensor(SensorPort.S1, true);
-		m_pilot.setTravelSpeed(max_speed / 3);
-		while(m_run)
-		{
-			
-//			m_pilot.rotate(117);
-//			Delay.msDelay(1000);
+//	public static void main(String[] args) 
+//	{
+//		//TrackedRobot robot = new TrackedRobot();
+////		m_lightSensorR = new LightSensor(SensorPort.S2, true);
+////		m_lightSensorL = new LightSensor(SensorPort.S1, true);
+//		m_pilot = new DifferentialPilot(3, 12.75, Motor.C, Motor.B, false);
+//		m_pilot.setTravelSpeed(max_speed / 3);
+//		while(true)
+//		{
 //			
-			m_pilot.forward();
-			if(notBusy){
-				makeDecision(m_lightSensorL.getLightValue(), m_lightSensorR.getLightValue());
-			}
-//			to very front of robot is 70
-//			to close wall, no junction 70 - 75
-//			to far wall, no junction ~150
-		}
-	}*/
+//			m_pilot.rotate(TURN_90 * 2);
+//			Delay.msDelay(1000);
+////			
+////			m_pilot.forward();
+////			if(notBusy)
+////			{
+////				makeDecision(m_lightSensorL.getLightValue(), m_lightSensorR.getLightValue());
+////			}
+////			to very front of robot is 70
+////			to close wall, no junction 70 - 75
+////			to far wall, no junction ~150
+//		}
+//	}
 	
 	private static void makeDecision(int lightValueL, int lightValueR) 
 	{
@@ -245,7 +309,7 @@ public class TrackedRobot {
 		// TODO Auto-generated method stub
 		notBusy = false;
 		m_pilot.stop();
-		m_pilot.rotate(234);
+		m_pilot.rotate(TURN_180);
 		Delay.msDelay(1000);
 		m_pilot.stop();
 		notBusy = true;
@@ -255,9 +319,9 @@ public class TrackedRobot {
 		// TODO Auto-generated method stub
 		notBusy = false;
 		m_pilot.forward();
-		Delay.msDelay(1500);
+		Delay.msDelay(400);
 		m_pilot.stop();
-		m_pilot.rotate(-117);
+		m_pilot.rotate(TURN_90);
 		//Delay.msDelay(500);
 		m_pilot.stop();
 		notBusy = true;
@@ -267,9 +331,9 @@ public class TrackedRobot {
 		// TODO Auto-generated method stub
 		notBusy = false;
 		m_pilot.forward();
-		Delay.msDelay(1500);
+		Delay.msDelay(400);
 		m_pilot.stop();
-		m_pilot.rotate(117);
+		m_pilot.rotate(-TURN_90);
 		//Delay.msDelay(500);
 		m_pilot.stop();
 		notBusy = true;
